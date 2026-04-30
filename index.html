@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>MAISON AYAORA — Elegant Jewelry & Timeless Beauty</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold: #B88B5C;
+      --gold-light: #D4AA7A;
+      --gold-pale: #E8D5BE;
+      --cream: #FCF9F5;
+      --warm-white: #F5F0E8;
+      --ink: #1E1A16;
+      --ink-soft: #2C241E;
+      --bark: #4A3F37;
+      --parchment: #F3EFE9;
+      --border: rgba(184,139,92,0.18);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── CUSTOM CURSOR ─── */
+    .cursor-dot {
+      position: fixed; top:0; left:0; z-index:9999; pointer-events:none;
+      width: 8px; height: 8px; background: var(--gold);
+      border-radius: 50%; transform: translate(-50%,-50%);
+      transition: width .2s, height .2s, background .2s;
+    }
+    .cursor-ring {
+      position: fixed; top:0; left:0; z-index:9998; pointer-events:none;
+      width: 36px; height: 36px; border: 1px solid rgba(184,139,92,0.5);
+      border-radius: 50%; transform: translate(-50%,-50%);
+      transition: transform .12s cubic-bezier(.25,.46,.45,.94), width .3s, height .3s, border-color .3s;
+    }
+    body:has(a:hover) .cursor-dot,
+    body:has(button:hover) .cursor-dot { width:12px; height:12px; background: var(--gold-light); }
+    body:has(a:hover) .cursor-ring,
+    body:has(button:hover) .cursor-ring { width: 52px; height: 52px; border-color: var(--gold); }
+
+    /* ─── GRAIN OVERLAY ─── */
+    body::before {
+      content:''; position:fixed; inset:0; z-index:1000; pointer-events:none;
+      opacity: .025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    /* ─── SPARKLES ─── */
+    .sparkle-container {
+      position: fixed; inset:0; pointer-events:none; z-index:999; overflow:hidden;
+    }
+    .sparkle {
+      position: absolute;
+      width: 3px; height: 3px;
+      background: var(--gold-light);
+      border-radius: 50%;
+      animation: sparkle-float linear infinite;
+      opacity: 0;
+    }
+    @keyframes sparkle-float {
+      0%   { opacity:0; transform: translateY(0) scale(0); }
+      15%  { opacity: .8; transform: translateY(-20px) scale(1); }
+      85%  { opacity: .4; transform: translateY(-120px) scale(.6); }
+      100% { opacity: 0; transform: translateY(-200px) scale(0); }
+    }
+
+    /* ─── LOADING SCREEN ─── */
+    #loader {
+      position: fixed; inset:0; z-index:9000;
+      background: var(--ink);
+      display: flex; flex-direction:column; align-items:center; justify-content:center;
+      transition: opacity .9s ease, visibility .9s;
+    }
+    #loader.hidden { opacity:0; visibility:hidden; }
+    .loader-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; letter-spacing: 8px; color: var(--cream);
+      overflow: hidden;
+    }
+    .loader-logo span {
+      display:inline-block;
+      animation: loader-letter .8s cubic-bezier(.76,0,.24,1) both;
+    }
+    @keyframes loader-letter {
+      from { opacity:0; transform: translateY(40px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .loader-line {
+      width: 0; height: 1px; background: var(--gold); margin-top: 18px;
+      animation: loader-line 1.2s 0.8s ease forwards;
+    }
+    @keyframes loader-line { to { width: 180px; } }
+    .loader-sub {
+      font-size:.65rem; letter-spacing:4px; text-transform:uppercase; color: var(--gold);
+      opacity:0; margin-top:12px;
+      animation: fade-in .6s 1.4s ease forwards;
+    }
+
+    /* ─── CONTAINER ─── */
+    .container { max-width:1320px; margin:0 auto; padding:0 40px; }
+
+    /* ─── NAV ─── */
+    .top-bar {
+      display:flex; justify-content:space-between; align-items:center;
+      padding: 32px 0 24px;
+      border-bottom: 1px solid var(--border);
+      opacity:0; animation: fade-up .8s 1.8s ease forwards;
+    }
+    .logo h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; letter-spacing: 3px; font-weight:500;
+    }
+    .logo p {
+      font-size:.68rem; letter-spacing:3.5px; text-transform:uppercase;
+      color: var(--gold); margin-top:5px; font-weight:400;
+    }
+    .nav-links { display:flex; gap:2.2rem; align-items:center; }
+    .nav-links a {
+      text-decoration:none; font-size:.88rem; font-weight:500;
+      color: var(--ink-soft); letter-spacing:.3px;
+      position:relative; padding-bottom:3px;
+      transition: color .25s;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:0; left:0;
+      height:1px; background:var(--gold); width:0;
+      transition: width .35s cubic-bezier(.76,0,.24,1);
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { width:100%; }
+
+    /* ─── HERO FOLLOW BAR ─── */
+    .hero-follow-section {
+      display:flex; justify-content:space-between; align-items:center;
+      margin:40px 0 28px; flex-wrap:wrap; gap:12px;
+      opacity:0; animation: fade-up .8s 2s ease forwards;
+    }
+    .follow-buttons {
+      display:flex; gap:1.4rem; background:#fff;
+      padding:7px 20px; border-radius:60px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04); align-items:center;
+    }
+    .follow-item {
+      display:flex; align-items:center; gap:8px;
+      font-size:.88rem; font-weight:500; color:var(--ink);
+      text-decoration:none; transition: all .25s;
+    }
+    .follow-item:hover { color: var(--gold); transform: translateY(-1px); }
+    .qr-code-tag {
+      display:flex; align-items:center; gap:10px;
+      background: var(--parchment); padding:6px 20px 6px 14px;
+      border-radius:60px; font-size:.84rem; font-weight:500;
+      cursor:pointer; transition: background .2s;
+    }
+    .qr-code-tag:hover { background: var(--gold-pale); }
+    .qr-code-tag span:first-child {
+      background: var(--ink); color: var(--cream);
+      padding:4px 9px; border-radius:40px; font-size:.68rem; font-weight:600;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap: 56px; margin: 28px 0 80px; align-items:center;
+    }
+    .hero-media { position:relative; }
+    .hero-img-wrap {
+      position:relative; overflow:hidden; border-radius:32px;
+      box-shadow: 0 28px 50px -15px rgba(0,0,0,0.12);
+    }
+    .hero-img-wrap::after {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(to top, rgba(30,26,22,.3) 0%, transparent 50%);
+      border-radius:32px; pointer-events:none;
+    }
+    .hero-img {
+      width:100%; aspect-ratio: 4/5; object-fit:cover;
+      border-radius:32px; display:block;
+      background: #E2D8CF;
+      transform: scale(1.05);
+      transition: transform 8s cubic-bezier(.25,.46,.45,.94);
+    }
+    .hero-img.loaded { transform: scale(1); }
+    .hero-img:hover { transform: scale(1.03) !important; }
+
+    /* Floating pill badges */
+    .badge-jewel {
+      position:absolute; bottom:22px; left:22px; z-index:10;
+      background: rgba(252,249,245,.92); backdrop-filter:blur(8px);
+      padding:9px 20px; border-radius:40px;
+      font-size:.78rem; font-weight:600; color:var(--gold);
+      border:.5px solid rgba(184,139,92,.35);
+      animation: badge-float 4s ease-in-out infinite;
+    }
+    @keyframes badge-float {
+      0%,100% { transform: translateY(0); }
+      50%     { transform: translateY(-6px); }
+    }
+    .badge-new {
+      position:absolute; top:22px; right:22px; z-index:10;
+      background: var(--gold); color: var(--cream);
+      padding:7px 18px; border-radius:40px;
+      font-size:.72rem; font-weight:600; letter-spacing:1.5px; text-transform:uppercase;
+      animation: badge-float 4s 2s ease-in-out infinite;
+    }
+
+    /* HERO TEXT */
+    .hero-content { opacity:0; animation: fade-up .9s 2.1s ease forwards; }
+    .hero-content h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.4rem; font-weight:400; line-height:1.15;
+      color: var(--ink-soft);
+    }
+    .hero-content h2 em {
+      font-style:italic; color: var(--gold);
+      position:relative; display:inline-block;
+    }
+    .hero-content h2 em::after {
+      content:''; position:absolute; bottom:-4px; left:0; right:0;
+      height:1.5px; background: linear-gradient(90deg, var(--gold), transparent);
+    }
+    .hero-content .subhead {
+      font-size:1rem; margin:1.4rem 0 1.8rem;
+      color: var(--bark); font-weight:300; max-width:88%;
+      border-left: 2.5px solid var(--gold); padding-left:20px; line-height:1.65;
+    }
+    .btn-group { display:flex; gap:18px; flex-wrap:wrap; }
+    .btn-primary {
+      background: var(--ink); color:white; border:none;
+      padding: 13px 34px; border-radius:40px; font-weight:500;
+      font-size:.88rem; letter-spacing:.6px; cursor:pointer;
+      text-decoration:none; display:inline-block;
+      position:relative; overflow:hidden;
+      transition: background .3s, transform .2s;
+    }
+    .btn-primary::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.12) 50%, transparent 70%);
+      transform: translateX(-100%); transition: transform .5s;
+    }
+    .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+    .btn-primary:hover::before { transform: translateX(100%); }
+    .btn-outline {
+      background:transparent; border: 1px solid var(--gold);
+      padding: 13px 34px; border-radius:40px; font-weight:500;
+      font-size:.88rem; color:var(--ink-soft); cursor:pointer;
+      text-decoration:none; display:inline-block;
+      transition: all .3s, transform .2s;
+    }
+    .btn-outline:hover { background: var(--gold); color:white; transform:translateY(-2px); }
+
+    /* ─── SECTION TITLES ─── */
+    .section-header {
+      text-align:center; margin: 70px 0 44px;
+    }
+    .section-header .eyebrow {
+      font-size:.68rem; letter-spacing:4px; text-transform:uppercase;
+      color: var(--gold); font-weight:500; margin-bottom:12px; display:block;
+    }
+    .section-header h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size:2.6rem; font-weight:400; line-height:1.2;
+    }
+    .section-header .divider {
+      width:48px; height:1px; background: var(--gold);
+      margin: 18px auto 0;
+      position:relative; overflow:visible;
+    }
+    .section-header .divider::before {
+      content:'◆'; position:absolute; left:50%; transform:translateX(-50%) translateY(-7px);
+      font-size:8px; color:var(--gold);
+    }
+
+    /* ─── COLLECTION GRID ─── */
+    .collection-grid {
+      display:grid; grid-template-columns: repeat(3,1fr);
+      gap: 36px; margin-bottom:70px;
+    }
+    .collection-card {
+      background:white; border-radius:26px; overflow:hidden;
+      border: 1px solid #EFE9E2;
+      transition: transform .4s cubic-bezier(.25,.46,.45,.94), box-shadow .4s;
+      opacity:0; transform:translateY(40px);
+    }
+    .collection-card.visible {
+      opacity:1; transform:translateY(0);
+      transition: opacity .7s ease, transform .7s cubic-bezier(.25,.46,.45,.94),
+                  box-shadow .4s;
+    }
+    .collection-card:hover {
+      transform: translateY(-10px) !important;
+      box-shadow: 0 28px 42px -12px rgba(0,0,0,.1), 0 0 0 1px rgba(184,139,92,.15);
+    }
+    .card-img-wrap { position:relative; overflow:hidden; }
+    .card-img {
+      width:100%; aspect-ratio: 1/1.1; object-fit:cover;
+      background: #F3EFE9; display:block;
+      transition: transform .6s cubic-bezier(.25,.46,.45,.94);
+    }
+    .collection-card:hover .card-img { transform: scale(1.06); }
+    .card-overlay {
+      position:absolute; inset:0;
+      background: linear-gradient(to top, rgba(30,26,22,.5) 0%, transparent 60%);
+      opacity:0; transition: opacity .35s;
+      display:flex; align-items:flex-end; padding:22px;
+    }
+    .collection-card:hover .card-overlay { opacity:1; }
+    .card-overlay a {
+      color:white; font-size:.78rem; text-decoration:none; letter-spacing:1.5px;
+      text-transform:uppercase; font-weight:500;
+      border-bottom:1px solid rgba(255,255,255,.4); padding-bottom:2px;
+    }
+    .card-text { padding: 22px 22px 28px; text-align:center; }
+    .card-text h3 {
+      font-family:'Cormorant Garamond',serif; font-size:1.75rem; font-weight:500;
+      margin-bottom:8px;
+    }
+    .card-text p { font-size:.83rem; color:#6A5C51; margin:10px 0; line-height:1.55; }
+    .price {
+      font-weight:600; color:var(--gold); letter-spacing:.3px;
+      font-size:.95rem; margin-top:8px; display:inline-block;
+      position:relative;
+    }
+    .price::before {
+      content:''; position:absolute; bottom:-3px; left:0; right:0;
+      height:1px; background: linear-gradient(90deg, transparent, var(--gold-pale), transparent);
+    }
+
+    /* ─── GOLD SHIMMER STRIP ─── */
+    .shimmer-strip {
+      margin: 30px 0 70px; padding: 36px 48px;
+      background: linear-gradient(135deg, var(--ink) 0%, #2C241E 100%);
+      border-radius: 32px; display:flex; align-items:center;
+      justify-content:space-between; flex-wrap:wrap; gap:24px;
+      position:relative; overflow:hidden;
+      opacity:0; transform:translateY(30px);
+    }
+    .shimmer-strip.visible { opacity:1; transform:translateY(0); transition: all .8s ease; }
+    .shimmer-strip::before {
+      content:''; position:absolute; inset:-50%;
+      background: conic-gradient(from 0deg at 50% 50%, transparent 0%, rgba(184,139,92,.07) 30%, transparent 60%);
+      animation: rotate-shimmer 10s linear infinite;
+    }
+    @keyframes rotate-shimmer { to { transform: rotate(360deg); } }
+    .shimmer-strip .strip-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size:1.9rem; color: var(--cream); font-weight:400;
+      line-height:1.3; position:relative; z-index:1;
+    }
+    .shimmer-strip .strip-text span { color: var(--gold-light); font-style:italic; }
+    .shimmer-strip .strip-stats {
+      display:flex; gap:40px; position:relative; z-index:1;
+    }
+    .stat-item { text-align:center; }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size:2.4rem; font-weight:500; color:var(--gold-light);
+      display:block;
+    }
+    .stat-label { font-size:.7rem; letter-spacing:2px; text-transform:uppercase; color:rgba(252,249,245,.5); }
+
+    /* ─── TESTIMONIAL ─── */
+    .testimonial {
+      background: var(--parchment); border-radius:48px;
+      padding: 60px 48px; margin: 50px 0 80px; text-align:center;
+      position:relative; overflow:hidden;
+      opacity:0; transform:translateY(30px);
+    }
+    .testimonial.visible { opacity:1; transform:translateY(0); transition: all .9s ease; }
+    .testimonial::before {
+      content:'"'; position:absolute; top:-20px; left:40px;
+      font-family:'Cormorant Garamond',serif; font-size:20rem;
+      color: rgba(184,139,92,.06); line-height:1; pointer-events:none;
+    }
+    .testimonial blockquote {
+      font-family:'Cormorant Garamond',serif; font-size:1.6rem;
+      font-weight:400; line-height:1.5; max-width:820px;
+      margin:0 auto; color: var(--ink-soft); position:relative; z-index:1;
+    }
+    .testimonial footer {
+      margin-top:28px; font-size:.8rem; letter-spacing:1.5px;
+      text-transform:uppercase; color:var(--gold); font-weight:500;
+    }
+    .stars {
+      display:flex; justify-content:center; gap:4px; margin-bottom:20px;
+    }
+    .stars span { color:var(--gold); font-size:1rem; animation: star-pulse 2s ease-in-out infinite; }
+    .stars span:nth-child(1) { animation-delay: 0s; }
+    .stars span:nth-child(2) { animation-delay: .15s; }
+    .stars span:nth-child(3) { animation-delay: .3s; }
+    .stars span:nth-child(4) { animation-delay: .45s; }
+    .stars span:nth-child(5) { animation-delay: .6s; }
+    @keyframes star-pulse {
+      0%,100% { transform:scale(1); opacity:.8; }
+      50%      { transform:scale(1.2); opacity:1; }
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top:1px solid #E7DFD7; padding: 52px 0 44px; margin-top:40px;
+    }
+    .footer-inner {
+      display:flex; justify-content:space-between; flex-wrap:wrap;
+      gap:28px; align-items:center;
+    }
+    .footer-links { display:flex; gap:32px; flex-wrap:wrap; }
+    .footer-links a {
+      text-decoration:none; color:var(--ink-soft); font-size:.84rem;
+      font-weight:500; transition: color .2s;
+    }
+    .footer-links a:hover { color:var(--gold); }
+    .social-icons { display:flex; gap:14px; }
+    .social-icon {
+      background: var(--parchment); width:40px; height:40px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius:50%; color:var(--ink); font-weight:600;
+      text-decoration:none; font-size:.78rem;
+      transition: all .3s cubic-bezier(.25,.46,.45,.94);
+      border:1px solid transparent;
+    }
+    .social-icon:hover {
+      background: var(--gold); color:white; transform:translateY(-4px) rotate(5deg);
+      border-color: var(--gold-light);
+      box-shadow: 0 8px 16px rgba(184,139,92,.3);
+    }
+    .qr-mini {
+      display:flex; align-items:center; gap:14px; background:#fff;
+      padding:8px 22px 8px 18px; border-radius:60px;
+      box-shadow:0 2px 8px rgba(0,0,0,.04); cursor:pointer;
+      transition: box-shadow .2s;
+    }
+    .qr-mini:hover { box-shadow: 0 4px 14px rgba(184,139,92,.2); }
+    .qr-symbol {
+      background:var(--ink); color:var(--cream);
+      padding:5px 9px; border-radius:30px; font-size:.7rem; font-weight:600;
+    }
+    .copy-link-tag { font-size:.75rem; color:#7F6E5E; cursor:pointer; transition:color .2s; }
+    .copy-link-tag:hover { color:var(--gold); }
+    .footer-copy {
+      text-align:center; margin-top:38px;
+      font-size:.68rem; color:#AB9B8C; letter-spacing:1px;
+    }
+
+    /* ─── SCROLL PROGRESS ─── */
+    #scroll-progress {
+      position:fixed; top:0; left:0; height:2px; z-index:8999;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      width:0%; transition: width .05s;
+    }
+
+    /* ─── QR MODAL ─── */
+    #qrModal {
+      display:none; position:fixed; inset:0; z-index:9000;
+      background:rgba(0,0,0,.65); backdrop-filter:blur(10px);
+      align-items:center; justify-content:center;
+    }
+    .modal-inner {
+      background: var(--cream); max-width:360px; width:90%;
+      padding: 40px 28px; border-radius:48px; text-align:center;
+      box-shadow: 0 40px 60px rgba(0,0,0,.25);
+      animation: modal-pop .4s cubic-bezier(.175,.885,.32,1.275);
+    }
+    @keyframes modal-pop {
+      from { opacity:0; transform: scale(.85) translateY(20px); }
+      to   { opacity:1; transform: scale(1) translateY(0); }
+    }
+    .modal-logo {
+      font-family:'Cormorant Garamond',serif; font-size:1.5rem;
+      letter-spacing:2px; margin-bottom:20px; color:var(--ink);
+    }
+
+    /* ─── UTILITIES ─── */
+    @keyframes fade-up {
+      from { opacity:0; transform:translateY(22px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity:0; }
+      to   { opacity:1; }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media(max-width:900px) {
+      .hero { grid-template-columns:1fr; gap:36px; }
+      .collection-grid { grid-template-columns: repeat(2,1fr); gap:24px; }
+      .container { padding:0 24px; }
+      .hero-content h2 { font-size:2.5rem; }
+      .shimmer-strip { padding:28px 32px; }
+      .shimmer-strip .strip-text { font-size:1.5rem; }
+      .top-bar { flex-direction:column; gap:16px; text-align:center; }
+      .nav-links { flex-wrap:wrap; justify-content:center; gap:1.2rem; }
+    }
+    @media(max-width:600px) {
+      .collection-grid { grid-template-columns:1fr; }
+      .shimmer-strip .strip-stats { gap:24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="loader-logo" id="loaderLogo"></div>
+  <div class="loader-line"></div>
+  <div class="loader-sub">Elegant Jewelry & Timeless Beauty</div>
+</div>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Scroll Progress -->
+<div id="scroll-progress"></div>
+
+<!-- Sparkles -->
+<div class="sparkle-container" id="sparkles"></div>
+
+<div class="container">
+
+  <!-- ── TOP BAR ── -->
+  <div class="top-bar">
+    <div class="logo">
+      <h1>MAISON AYAORA</h1>
+      <p>ELEGANT JEWELRY & TIMELESS BEAUTY</p>
+    </div>
+    <div class="nav-links">
+      <a href="#">Jewelry</a>
+      <a href="#">High Jewelry</a>
+      <a href="#">The Atelier</a>
+      <a href="#">Journal</a>
+    </div>
+  </div>
+
+  <!-- ── FOLLOW BAR ── -->
+  <div class="hero-follow-section">
+    <div class="follow-buttons">
+      <a href="#" class="follow-item" id="followBtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M22 12C22 6.477 17.523 2 12 2S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879v-6.99h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.99C18.343 21.128 22 16.991 22 12z" fill="currentColor"/></svg>
+        <span>Following</span>
+      </a>
+      <a href="#" class="follow-item" id="shareBtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.05 4.11c-.05.23-.09.46-.09.7 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/></svg>
+        <span>Share</span>
+      </a>
+    </div>
+    <div class="qr-code-tag" id="qrCodeTrigger">
+      <span>QR</span>
+      <span>Scan code →</span>
+    </div>
+  </div>
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="hero-media" style="opacity:0;animation:fade-up .9s 2s ease forwards">
+      <div class="hero-img-wrap">
+        <img class="hero-img" id="heroImg"
+          src="https://placehold.co/800x1000/EFE6DD/8B7355?text=MAISON+AYAORA+%E2%80%A2+Pearl+Embrace"
+          alt="Elegant jewelry - timeless necklace and pearls">
+        <div class="badge-jewel">✨ NEW COUTURE COLLECTION</div>
+        <div class="badge-new">SS 2026</div>
+      </div>
+    </div>
+    <div class="hero-content">
+      <h2>Timeless Beauty,<br>Worn With <em>Soul</em></h2>
+      <p class="subhead">Each piece tells a story of elegance, crafted for generations. Discover heirloom jewelry where modern design meets ancient savoir-faire.</p>
+      <div class="btn-group">
+        <a href="#" class="btn-primary">Explore the Collection</a>
+        <a href="#" class="btn-outline">Book an Appointment</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COLLECTION ── -->
+  <div class="section-header reveal">
+    <span class="eyebrow">The Icons</span>
+    <h3>Timeless Signatures</h3>
+    <div class="divider"></div>
+  </div>
+
+  <div class="collection-grid">
+    <div class="collection-card">
+      <div class="card-img-wrap">
+        <img class="card-img" src="https://placehold.co/600x660/EADDCB/B1885C?text=La+Lumière" alt="La Lumière necklace">
+        <div class="card-overlay"><a href="#">Discover →</a></div>
+      </div>
+      <div class="card-text">
+        <h3>La Lumière</h3>
+        <p>Diamonds & ethical gold. Modern classic cascade, light as a whisper.</p>
+        <span class="price">POA / Bespoke</span>
+      </div>
+    </div>
+    <div class="collection-card">
+      <div class="card-img-wrap">
+        <img class="card-img" src="https://placehold.co/600x660/EADDCB/B1885C?text=Serpent+d'Éternité" alt="Serpent ring">
+        <div class="card-overlay"><a href="#">Discover →</a></div>
+      </div>
+      <div class="card-text">
+        <h3>Serpent d'Éternité</h3>
+        <p>Inspired by timeless wisdom, sculptural 18k gold with emerald eyes.</p>
+        <span class="price">$12,800 USD</span>
+      </div>
+    </div>
+    <div class="collection-card">
+      <div class="card-img-wrap">
+        <img class="card-img" src="https://placehold.co/600x660/EADDCB/B1885C?text=Aya+Pearl+Drop" alt="Aya Pearl earrings">
+        <div class="card-overlay"><a href="#">Discover →</a></div>
+      </div>
+      <div class="card-text">
+        <h3>Aya Pearl Drop</h3>
+        <p>South Sea pearls, diamond pavé. Tailored for the modern romantic.</p>
+        <span class="price">$6,450 USD</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SHIMMER STATS STRIP ── -->
+  <div class="shimmer-strip reveal">
+    <div class="strip-text">Crafted for <span>eternity</span>,<br>worn every day.</div>
+    <div class="strip-stats">
+      <div class="stat-item">
+        <span class="stat-num" data-target="2400">0</span>
+        <span class="stat-label">Pieces Created</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="18">0</span>
+        <span class="stat-label">Countries</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="12">0</span>
+        <span class="stat-label">Awards</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BEAUTY ── -->
+  <div class="section-header reveal">
+    <span class="eyebrow">Beauty Rituals</span>
+    <h3>Timeless Beauty <span style="color:var(--gold)">Essentials</span></h3>
+    <div class="divider"></div>
+  </div>
+
+  <div class="collection-grid">
+    <div class="collection-card">
+      <div class="card-img-wrap">
+        <img class="card-img" src="https://placehold.co/600x660/F0E7DE/C2A27A?text=L'Élixir+d'Or" alt="Golden beauty elixir">
+        <div class="card-overlay"><a href="#">Discover →</a></div>
+      </div>
+      <div class="card-text">
+        <h3>L'Élixir d'Or</h3>
+        <p>Luxury facial oil with 24k gold & rare botanicals.</p>
+        <span class="price">$380</span>
+      </div>
+    </div>
+    <div class="collection-card">
+      <div class="card-img-wrap">
+        <img class="card-img" src="https://placehold.co/600x660/F0E7DE/C2A27A?text=Poudre+de+Lumière" alt="Radiance compact">
+        <div class="card-overlay"><a href="#">Discover →</a></div>
+      </div>
+      <div class="card-text">
+        <h3>Poudre de Lumière</h3>
+        <p>Translucent finishing powder, hand-pressed in France.</p>
+        <span class="price">$120</span>
+      </div>
+    </div>
+    <div class="collection-card">
+      <div class="card-img-wrap">
+        <img class="card-img" src="https://placehold.co/600x660/F0E7DE/C2A27A?text=Soie+Velours+Set" alt="Silk skincare set">
+        <div class="card-overlay"><a href="#">Discover →</a></div>
+      </div>
+      <div class="card-text">
+        <h3>Soie Velours Set</h3>
+        <p>Silk pillowcase + overnight repair serum, limited edition.</p>
+        <span class="price">$245</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TESTIMONIAL ── -->
+  <div class="testimonial reveal">
+    <div class="stars">
+      <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+    </div>
+    <blockquote>"Maison Ayaora redefines what timeless means — each jewel carries the memory of a feeling, each beauty ritual an invitation to stillness."</blockquote>
+    <footer>— ELLE DECOR, Jewelry & Heritage Awards 2025</footer>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="#">The Maison</a>
+        <a href="#">Bespoke Requests</a>
+        <a href="#">Care & Repairs</a>
+        <a href="#">Privacy</a>
+        <a href="#">Newsletter</a>
+      </div>
+      <div class="social-icons">
+        <a href="#" class="social-icon">IG</a>
+        <a href="#" class="social-icon">FB</a>
+        <a href="#" class="social-icon">YT</a>
+        <a href="#" class="social-icon">P</a>
+      </div>
+      <div class="qr-mini" id="footerQrBtn">
+        <div class="qr-symbol">📱 QR</div>
+        <span class="copy-link-tag" id="copyLinkBtn">Copy link 🔗</span>
+        <span style="color:#ccc;">|</span>
+        <span class="copy-link-tag" id="showQrHint">Get QR code</span>
+      </div>
+    </div>
+    <div class="footer-copy">© MAISON AYAORA — Elegant Jewelry & Timeless Beauty. All rights reserved.</div>
+  </footer>
+</div>
+
+<!-- QR Modal -->
+<div id="qrModal" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,.65); backdrop-filter:blur(10px); align-items:center; justify-content:center;">
+  <div class="modal-inner">
+    <div class="modal-logo">MAISON AYAORA</div>
+    <div id="qrCodeVisual" style="background:#fff;width:170px;height:170px;margin:12px auto;display:flex;align-items:center;justify-content:center;border-radius:24px;border:1px solid #E3D7CE;">
+      <canvas id="qrCanvas" width="160" height="160" style="width:160px;height:160px;"></canvas>
+    </div>
+    <p style="margin-top:14px;font-size:.84rem;line-height:1.5;">Scan to visit Maison Ayaora<br><span id="modalLinkDisplay" style="font-size:.68rem;word-break:break-all;color:var(--bark)"></span></p>
+    <button id="closeModalBtn" style="margin-top:22px;background:var(--ink);border:none;color:white;padding:10px 30px;border-radius:60px;cursor:pointer;font-family:inherit;font-size:.88rem;transition:background .2s;" onmouseover="this.style.background='#B88B5C'" onmouseout="this.style.background='#1E1A16'">Close</button>
+  </div>
+</div>
+
+<script>
+  /* ── LOADER ── */
+  const text = "MAISON AYAORA";
+  const loaderLogo = document.getElementById('loaderLogo');
+  text.split('').forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.textContent = ch === ' ' ? '\u00A0' : ch;
+    s.style.animationDelay = (i * 0.06) + 's';
+    loaderLogo.appendChild(s);
+  });
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('loader').classList.add('hidden');
+      document.getElementById('heroImg').classList.add('loaded');
+    }, 2000);
+  });
+
+  /* ── CURSOR ── */
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+  (function animRing(){
+    rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+
+  /* ── SCROLL PROGRESS ── */
+  window.addEventListener('scroll', () => {
+    const s = document.documentElement, b = document.body;
+    const total = s.scrollHeight - s.clientHeight;
+    const prog = (window.scrollY / total) * 100;
+    document.getElementById('scroll-progress').style.width = prog + '%';
+  });
+
+  /* ── SPARKLES ── */
+  const sparkleContainer = document.getElementById('sparkles');
+  function createSparkle() {
+    const el = document.createElement('div');
+    el.className = 'sparkle';
+    const size = 2 + Math.random()*4;
+    el.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${40+Math.random()*60}%;animation-duration:${3+Math.random()*4}s;animation-delay:${Math.random()*5}s;`;
+    sparkleContainer.appendChild(el);
+    setTimeout(() => el.remove(), 8000);
+  }
+  setInterval(createSparkle, 400);
+
+  /* ── SCROLL REVEAL ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, idx) => {
+      if (e.isIntersecting) {
+        const el = e.target;
+        if (el.classList.contains('collection-card')) {
+          const siblings = el.parentElement.querySelectorAll('.collection-card');
+          let delay = 0;
+          siblings.forEach((s, i) => { if(s===el) delay = i * 120; });
+          setTimeout(() => el.classList.add('visible'), delay);
+        } else {
+          el.classList.add('visible');
+        }
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.collection-card, .shimmer-strip, .testimonial, .section-header.reveal').forEach(el => {
+    if (el.classList.contains('section-header')) {
+      el.style.opacity='0'; el.style.transform='translateY(28px)';
+      new IntersectionObserver(([e]) => {
+        if(e.isIntersecting){ el.style.transition='all .8s ease'; el.style.opacity='1'; el.style.transform='none'; }
+      }, {threshold:.2}).observe(el);
+    } else {
+      observer.observe(el);
+    }
+  });
+
+  /* ── COUNTER ANIMATION ── */
+  function animateCounter(el, target) {
+    const dur = 1800, step = 16;
+    let current = 0;
+    const inc = target / (dur / step);
+    const t = setInterval(() => {
+      current = Math.min(current + inc, target);
+      el.textContent = Math.floor(current).toLocaleString() + (target >= 1000 ? '+' : '');
+      if (current >= target) clearInterval(t);
+    }, step);
+  }
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.stat-num').forEach(el => {
+        animateCounter(el, parseInt(el.dataset.target));
+      });
+    }
+  }, {threshold:.5}).observe(document.querySelector('.shimmer-strip'));
+
+  /* ── QR MODAL ── */
+  const url = window.location.href;
+  async function openQR() {
+    const modal = document.getElementById('qrModal');
+    modal.style.display = 'flex';
+    document.getElementById('modalLinkDisplay').textContent = url;
+    if (!window.QRCode) {
+      const s = document.createElement('script');
+      s.src = "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
+      document.head.appendChild(s);
+      await new Promise(r => s.onload = r);
+    }
+    const wrap = document.getElementById('qrCodeVisual');
+    wrap.innerHTML = '';
+    new QRCode(wrap, { text: url, width:160, height:160, colorDark:'#1E1A16', colorLight:'#FCF9F5', correctLevel: QRCode.CorrectLevel.H });
+  }
+  document.getElementById('qrCodeTrigger').addEventListener('click', openQR);
+  document.getElementById('showQrHint').addEventListener('click', openQR);
+  document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('qrModal').style.display='none'; });
+  document.getElementById('qrModal').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.style.display='none'; });
+
+  /* ── COPY LINK ── */
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('copyLinkBtn');
+      btn.textContent = 'Copied! ✓';
+      setTimeout(() => btn.textContent = 'Copy link 🔗', 2000);
+    } catch(e) { alert('Link: ' + url); }
+  }
+  document.getElementById('copyLinkBtn').addEventListener('click', copyLink);
+
+  /* ── FOLLOW / SHARE ── */
+  document.getElementById('followBtn').addEventListener('click', e => {
+    e.preventDefault();
+    alert('Follow MAISON AYAORA on Instagram, Facebook & Pinterest for timeless inspiration 🕊️');
+  });
+  document.getElementById('shareBtn').addEventListener('click', async e => {
+    e.preventDefault();
+    if (navigator.share) {
+      try { await navigator.share({ title:'MAISON AYAORA', text:'Elegant Jewelry & Timeless Beauty', url }); }
+      catch(_) {}
+    } else { copyLink(); }
+  });
+</script>
+</body>
+</html>
